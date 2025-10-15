@@ -25,5 +25,5 @@ class UsuarioUseCase:
         if not user or not cryp.verify(senha, user.Senha):
             raise CredenciaisInvalidasException("Login ou senha inválidos.")
 
-        access_token = create_access_token(identity=user.IDUsuario)
+        access_token = create_access_token(identity=str(user.IDUsuario))
         return access_token

@@ -1,9 +1,9 @@
 from flask import jsonify, Blueprint
 from pydantic import ValidationError
-from src.core.schemas.usuarios_schemas import ApiResponseDTO
+from src.core.schemas.api_response_dto import ApiResponseDTO
 import traceback
-
 from src.core.exceptions.user_exeption import (UsuarioJaExistenteException, CredenciaisInvalidasException, ErroDeValidacaoException)
+from src.core.exceptions.pokemons_exceptions import PokemonNaoEncontradoException
 
 def register_error_handlers(bp: Blueprint):
     """
@@ -39,3 +39,8 @@ def register_error_handlers(bp: Blueprint):
         traceback.print_exc()
         response = ApiResponseDTO(success=False, message="Ocorreu um erro inesperado no servidor.")
         return jsonify(response.model_dump()), 500
+    
+    @bp.errorhandler(PokemonNaoEncontradoException)
+    def handle_pokemon_nao_encontrado(error: PokemonNaoEncontradoException):
+        response_dto = ApiResponseDTO(success=False, message=str(error))
+        return jsonify(response_dto.model_dump()), 404 

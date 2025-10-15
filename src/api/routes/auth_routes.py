@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from src.core.schemas.usuarios_schemas import RegisterPayload, LoginPayload, UserResponseDTO, ApiResponseDTO
+from src.core.schemas.usuarios_schemas import RegisterPayload, LoginPayload, UserResponseDTO
+from src.core.schemas.api_response_dto import ApiResponseDTO
 from src.core.exceptions.error_handlers import register_error_handlers
 from src.core.usecases.usuario.usuario_use_case import UsuarioUseCase
 
@@ -30,7 +31,7 @@ def registrar_usuario(use_case: UsuarioUseCase):
     return jsonify(response_dto.model_dump()), 201
 
 @auth_bp.route('/login', methods=['POST'])
-def login(use_case: UsuarioUseCase):
+def fazer_login(use_case: UsuarioUseCase):
     payload = LoginPayload(**request.get_json())
     
     access_token = use_case.login(

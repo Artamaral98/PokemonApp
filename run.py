@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_injector import FlaskInjector
@@ -7,6 +7,8 @@ from src.infrastructure.database import db
 from src.config import Config
 from src.core.dependencias.injecao_de_dependencias import AppModule
 from src.api.routes.auth_routes import auth_bp
+from src.api.routes.pokemon_routes import pokemon_bp
+from src.core.exceptions.jwt_error_handler import register_jwt_error_handlers
 
 
 def create_app():
@@ -16,9 +18,11 @@ def create_app():
 
     db.init_app(app)
     Migrate(app, db)
-    JWTManager(app)
+    jwt = JWTManager(app)
+    register_jwt_error_handlers(jwt)
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(pokemon_bp, url_prefix='/api/pokemon')
 
     injector = Injector([AppModule()])
     FlaskInjector(app=app, injector=injector)
